@@ -166,7 +166,7 @@ df[df["gender"] == "M"]["name"].nunique()
 df[df["gender"] == "F"]["name"].nunique()
 
 # Unique names for gender neutral.
-both_df = df.pivot_table(index="name", columns="gender", alues="count", aggfunc=np.sum).dropna()
+both_df = df.pivot_table(index="name", columns="gender", values="count", aggfunc=np.sum).dropna()
 both_df.index.nunique()
 ```
 
