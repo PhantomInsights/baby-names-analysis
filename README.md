@@ -88,7 +88,7 @@ Sarah,F,9045
 Grace,F,9036
 ```
 
-We use the string `split(",")` method to separate each line by the comma. Then we will model each data field into their respectivo variable and append it to the `data_list`.
+We use the string `split(",")` method to separate each line by the comma. Then we will model each data field into their respective variable and append it to the `data_list`.
 
 ## Data Exploration (EDA)
 
