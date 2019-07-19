@@ -450,7 +450,7 @@ plt.show()
 
 ### Top 10 Trending Names
 
-For our last plot we will get the top 10 trending names in the latest 10 years (2008-2018).
+For our last plot we will get the top 10 trending names in the last 10 years (2008-2018).
 
 This one is the most complex to make, the first thing to do is to remove all records that are older than 2008.
 
@@ -474,8 +474,7 @@ pivoted_df["total"] = pivoted_df.sum(axis=1)
 We sort the dataframe to check which are the top values and slice it. After that we drop the `total` column since it won't be used anymore.
 
 ```python
-sorted_df = pivoted_df.sort_values("total", ascending=False)[
-    :10].drop("total", axis=1)
+sorted_df = pivoted_df.sort_values("total", ascending=False)[:10].drop("total", axis=1)
 ```
 
 We transpose the dataframe so it can be more easily plotted.
@@ -498,7 +497,7 @@ yticks_labels = ["{:,}".format(i) for i in range(8000, 24000+1, 2000)]
 plt.yticks(np.arange(8000, 24000+1, 2000), yticks_labels)
 ```
 
-We set our xticks in steps of 1, from 2009 to 2018.
+We set our xticks in steps of 1, from 2008 to 2018.
 
 ```python
 xticks_labels = ["{}".format(i) for i in range(2008, 2618+1, 1)]
