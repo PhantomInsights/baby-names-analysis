@@ -158,7 +158,7 @@ def plot_counts_by_year(df):
 
 
 def plot_popular_names_growth(df):
-    """Plots the most populare names and how they have grown trough the years.
+    """Plots the most popular names and how they have grown trough the years.
 
     Parameters
     ----------
@@ -167,30 +167,39 @@ def plot_popular_names_growth(df):
 
     """
 
-    # First we get the 10 most popular names of all time.
-    top_10_names = df[["name", "count"]].groupby(
-        "name").sum().sort_values("count", ascending=False)[:10].index.tolist()
+    # We first pivot the dataframe to merge values from male and female and
+    # pivot the table so the names are our index and the years are our columns.
+    # We also fill missing values with zeroes.
+    pivoted_df = df.pivot_table(
+        index="name", columns="year", values="count", aggfunc=np.sum).fillna(0)
 
-    # Then we remove all records that don't have those names in.
-    filtered_df = df[df["name"].isin(top_10_names)]
+    # Then we calculate the percentage of each name by year.
+    percentage_df = pivoted_df / pivoted_df.sum() * 100
 
-    # Then we merge values from male and female and pivot the table so the years are our index.
-    pivoted_df = filtered_df.pivot_table(
-        index="year", columns="name", values="count", aggfunc=np.sum)
+    # We add a new column to store the cumulative percentages sum.
+    percentage_df["total"] = percentage_df.sum(axis=1)
+
+    # We sort the dataframe to check which are the top values and slice it.
+    # After that we drop the 'total' column since it won't be used anymore.
+    sorted_df = percentage_df.sort_values(
+        by="total", ascending=False).drop("total", axis=1)[0:10]
+
+    # We flip the axes so we can plot the data more easily.
+    transposed_df = sorted_df.transpose()
 
     # We plot each name individually by using the column name as the label and Y-axis.
-    for name in top_10_names:
-        plt.plot(pivoted_df.index, pivoted_df[name], label=name)
+    for name in transposed_df.columns.tolist():
+        plt.plot(transposed_df.index, transposed_df[name], label=name)
 
-    # We set our yticks in steps of 10,000.
-    yticks_labels = ["{:,}".format(i) for i in range(0, 100000+1, 10000)]
-    plt.yticks(np.arange(0, 100000+1, 10000), yticks_labels)
+    # We set our yticks in steps of 0.5.
+    yticks_labels = ["{}%".format(i) for i in np.arange(0, 5.5, 0.5)]
+    plt.yticks(np.arange(0, 5.5, 0.5), yticks_labels)
 
     # Final customizations.
     plt.legend()
     plt.grid(False)
     plt.xlabel("Year")
-    plt.ylabel("Records Per Year")
+    plt.ylabel("Percentage by Year")
     plt.title("Top 10 Names Growth")
     plt.savefig("most_popular_growth.png", facecolor="#443941")
 
@@ -207,31 +216,34 @@ def plot_top_10_trending(df):
 
     # First we remove all records previous to 2008.
     filtered_df = df[df["year"] >= 2008]
-
+    
     # Then we merge values from male and female and pivot the table
     # so the names are our index and the years are our columns.
     # We also fill missing values with zeroes.
     pivoted_df = filtered_df.pivot_table(
         index="name", columns="year", values="count", aggfunc=np.sum).fillna(0)
 
-    # We create a new column named 'total' which sums all years records for each name.
-    pivoted_df["total"] = pivoted_df.sum(axis=1)
+    # Then we calculate the percentage of each name by year.
+    percentage_df = pivoted_df / pivoted_df.sum() * 100
+
+    # We add a new column to store the cumulative percentages sum.
+    percentage_df["total"] = percentage_df.sum(axis=1)
 
     # We sort the dataframe to check which are the top values and slice it.
     # After that we drop the 'total' column since it won't be used anymore.
-    sorted_df = pivoted_df.sort_values("total", ascending=False)[
-        :10].drop("total", axis=1)
+    sorted_df = percentage_df.sort_values(
+        by="total", ascending=False).drop("total", axis=1)[0:10]
 
-    # We transpose the dataframe so it can be more easily plotted.
+    # We flip the axes so we can plot the dataframe more easily.
     transposed_df = sorted_df.transpose()
 
     # We plot each name individually by using the column name as the label and Y-axis.
     for name in transposed_df.columns.tolist():
         plt.plot(transposed_df.index, transposed_df[name], label=name)
 
-    # We set our yticks in steps of 2,000.
-    yticks_labels = ["{:,}".format(i) for i in range(8000, 24000+1, 2000)]
-    plt.yticks(np.arange(8000, 24000+1, 2000), yticks_labels)
+    # We set our yticks in steps of 0.05%.
+    yticks_labels = ["{:.2f}%".format(i) for i in np.arange(0.3, 0.7, 0.05)]
+    plt.yticks(np.arange(0.3, 0.7, 0.05), yticks_labels)
 
     # We set our xticks in steps of 1, from 2009 to 2018.
     xticks_labels = ["{}".format(i) for i in range(2008, 2618+1, 1)]
@@ -241,7 +253,7 @@ def plot_top_10_trending(df):
     plt.legend()
     plt.grid(False)
     plt.xlabel("Year")
-    plt.ylabel("Records Per Year")
+    plt.ylabel("Percentage by Year")
     plt.title("Top 10 Trending Names")
     plt.savefig("trending_names.png", facecolor="#443941")
 
