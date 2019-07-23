@@ -90,6 +90,8 @@ Grace,F,9036
 
 We use the string `split(",")` method to separate each line by the comma. Then we will model each data field into their respective variable and append it to the `data_list`.
 
+This newly created csv file can be imported into any `SQL` database or other statistical tools or programming languages. We will continue to use `Python` for this project.
+
 ## Data Exploration (EDA)
 
 Now that we have a csv file containing almost two million rows it's time to get some insights from it. For this we will use the `pandas` library.
@@ -335,7 +337,7 @@ For creating the plots we will use `seaborn` and `matplotlib`, the reason for th
 
 In this project we are only going to use line plots, which are very helpful for displaying how a value changes over time.
 
-The first thing to do is to apply some custom colors that will apply gobally to each plot.
+The first thing to do is to set some custom colors that will apply globally to each plot.
 
 
 ```python
@@ -355,7 +357,7 @@ sns.set(style="ticks",
 
 With our style declared we are ready to plot our data.
 
-*Note: The next code blocks are more advanced than the previous ones. I also make heavy use of one-liners for eficiency reasons, but don't worry, I will explain what each line does.*
+*Note: The next code blocks are more advanced than the previous ones. I also make heavy use of one-liners for efficiency reasons, but don't worry, I will explain what each line does.*
 
 ### Counts by Year
 
@@ -401,24 +403,33 @@ plt.show()
 
 For our next plot we will observe how the all-time most popular names have grown over the years.
 
-The first thing to do is to sum all names counts and get the top 10 in a list.
+First, we merge values from male and female and pivot the table so the names are our index and the years are our columns. We also fill missing values with zeroes.
 
 ```python
-top_10_names = df[["name", "count"]].groupby(
-    "name").sum().sort_values("count", ascending=False)[:10].index.tolist()
+pivoted_df = df.pivot_table(index="name", columns="year", values="count", aggfunc=np.sum).fillna(0)
 ```
 
-Then we remove all records that don't have those names in.
+Then we calculate the percentage of each name by year.
 
 ```python
-filtered_df = df[df["name"].isin(top_10_names)]
+percentage_df = pivoted_df / pivoted_df.sum() * 100
+```
+We add a new column to store the cumulative percentages sum.
+
+```python
+percentage_df["total"] = percentage_df.sum(axis=1)
 ```
 
-Then we merge values from male and female and pivot the table so the years are our index.
+We sort the dataframe to check which are the top values and slice it. After that we drop the `total` column since it won't be used anymore.
 
 ```python
-pivoted_df = filtered_df.pivot_table(
-    index="year", columns="name", values="count", aggfunc=np.sum)
+sorted_df = percentage_df.sort_values(by="total", ascending=False).drop("total", axis=1)0:10]
+```
+
+We flip the axes so we can plot the data more easily.
+
+```python
+transposed_df = sorted_df.transpose()
 ```
 
 We plot each name individually by using the column name as the label and Y-axis.
@@ -428,11 +439,11 @@ for name in top_10_names:
     plt.plot(pivoted_df.index, pivoted_df[name], label=name)
 ```
 
-We set our yticks in steps of 10,000.
+We set our yticks in steps of 0.5%.
 
 ```python
-yticks_labels = ["{:,}".format(i) for i in range(0, 100000+1, 10000)]
-plt.yticks(np.arange(0, 100000+1, 10000), yticks_labels)
+yticks_labels = ["{}%".format(i) for i in np.arange(0, 5.5, 0.5)]
+plt.yticks(np.arange(0, 5.5, 0.5), yticks_labels)
 ```
 
 We add the final customizations.
@@ -441,7 +452,7 @@ We add the final customizations.
 plt.legend()
 plt.grid(False)
 plt.xlabel("Year")
-plt.ylabel("Records Per Year")
+plt.ylabel("Percentage by Year")
 plt.title("Top 10 Names Growth")
 plt.show()
 ```
@@ -452,7 +463,7 @@ plt.show()
 
 For our last plot we will get the top 10 trending names in the last 10 years (2008-2018).
 
-This one is the most complex to make, the first thing to do is to remove all records that are older than 2008.
+This one is very similar to the previous one, the first thing to do is to remove all records that are older than 2008.
 
 ```python
 filtered_df = df[df["year"] >= 2008]
@@ -461,23 +472,28 @@ filtered_df = df[df["year"] >= 2008]
 Then we merge values from male and female and pivot the table so the names are our index and the years are our columns. We also fill missing values with zeroes.
 
 ```python
-pivoted_df = filtered_df.pivot_table(
-    index="name", columns="year", values="count", aggfunc=np.sum).fillna(0)
+pivoted_df = filtered_df.pivot_table(index="name", columns="year", values="count", aggfunc=np.sum).fillna(0)
 ```
 
-We create a new column named `total` which sums all years records for each name.
+Then we calculate the percentage of each name by year.
 
 ```python
-pivoted_df["total"] = pivoted_df.sum(axis=1)
+percentage_df = pivoted_df / pivoted_df.sum() * 100
+```
+
+We add a new column to store the cumulative percentages sum.
+
+```python   
+percentage_df["total"] = percentage_df.sum(axis=1)
 ```
 
 We sort the dataframe to check which are the top values and slice it. After that we drop the `total` column since it won't be used anymore.
 
 ```python
-sorted_df = pivoted_df.sort_values("total", ascending=False)[:10].drop("total", axis=1)
+sorted_df = percentage_df.sort_values("total", ascending=False)[:10].drop("total", axis=1)
 ```
 
-We transpose the dataframe so it can be more easily plotted.
+We flip the axes so we can plot the dataframe more easily.
 
 ```python
 transposed_df = sorted_df.transpose()
@@ -490,11 +506,11 @@ for name in transposed_df.columns.tolist():
     plt.plot(transposed_df.index, transposed_df[name], label=name)
 ```
 
-We set our yticks in steps of 2,000.
+We set our yticks in steps of 0.05%.
 
 ```python
-yticks_labels = ["{:,}".format(i) for i in range(8000, 24000+1, 2000)]
-plt.yticks(np.arange(8000, 24000+1, 2000), yticks_labels)
+yticks_labels = ["{:.2f}%".format(i) for i in np.arange(0.3, 0.7, 0.05)]
+plt.yticks(np.arange(0.3, 0.7, 0.05), yticks_labels)
 ```
 
 We set our xticks in steps of 1, from 2008 to 2018.
@@ -510,7 +526,7 @@ We add the final customizations.
 plt.legend()
 plt.grid(False)
 plt.xlabel("Year")
-plt.ylabel("Records Per Year")
+plt.ylabel("Percentage by Year")
 plt.title("Top 10 Trending Names")
 plt.show()
 ```
