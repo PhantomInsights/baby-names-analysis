@@ -423,7 +423,7 @@ percentage_df["total"] = percentage_df.sum(axis=1)
 We sort the dataframe to check which are the top values and slice it. After that we drop the `total` column since it won't be used anymore.
 
 ```python
-sorted_df = percentage_df.sort_values(by="total", ascending=False).drop("total", axis=1)0:10]
+sorted_df = percentage_df.sort_values(by="total", ascending=False).drop("total", axis=1)[0:10]
 ```
 
 We flip the axes so we can plot the data more easily.
@@ -435,7 +435,7 @@ transposed_df = sorted_df.transpose()
 We plot each name individually by using the column name as the label and Y-axis.
 
 ```python
-for name in top_10_names:
+for name in transposed_df.columns.tolist():
     plt.plot(pivoted_df.index, pivoted_df[name], label=name)
 ```
 
@@ -490,7 +490,7 @@ percentage_df["total"] = percentage_df.sum(axis=1)
 We sort the dataframe to check which are the top values and slice it. After that we drop the `total` column since it won't be used anymore.
 
 ```python
-sorted_df = percentage_df.sort_values("total", ascending=False)[:10].drop("total", axis=1)
+sorted_df = percentage_df.sort_values("total", ascending=False).drop("total", axis=1)[0:10]
 ```
 
 We flip the axes so we can plot the dataframe more easily.
