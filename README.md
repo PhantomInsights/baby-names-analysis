@@ -540,3 +540,5 @@ I wanted to work on this project for quite some time and I finally got the time 
 I hope you had fun reading it and you have learned some new skills.
 
 As always, if you have any questions feel free to open an issue and I will try to answer them in a timely manner.
+
+[![Become a Patron!](https://c5.patreon.com/external/logo/become_a_patron_button.png)](https://www.patreon.com/bePatron?u=20521425)
