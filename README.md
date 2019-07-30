@@ -436,7 +436,7 @@ We plot each name individually by using the column name as the label and Y-axis.
 
 ```python
 for name in transposed_df.columns.tolist():
-    plt.plot(pivoted_df.index, pivoted_df[name], label=name)
+    plt.plot(transposed_df.index, transposed_df[name], label=name)
 ```
 
 We set our yticks in steps of 0.5%.
