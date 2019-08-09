@@ -96,7 +96,7 @@ This newly created csv file can be imported into any `SQL` database or other sta
 
 Now that we have a csv file containing almost two million rows it's time to get some insights from it. For this we will use the `pandas` library.
 
-Fhe first thing to do is to import the libraries using the recommended method.
+The first thing to do is to import the libraries using the recommended method.
 
 ```python
 import matplotlib.pyplot as plt
@@ -178,7 +178,7 @@ To get the top 10 most used male and female names we are going to first filter t
 
 Once we have a gender specific `dataframe` we wiil select only 2 fields, name and count. From there we will use the `groupby()` method on the name field and aggregate the results using a `sum()`.
 
-Finally, we will sort the values on the count field in descending order and use the `Head(10)` method to get the top 10 results.
+Finally, we will sort the values on the count field in descending order and use the `head(10)` method to get the top 10 results.
 
 ```python
 # Step by step approach, the one-liners can be found below their respective tables.
@@ -379,7 +379,7 @@ plt.plot(male_df, label="Male", color="lightblue")
 plt.plot(female_df, label="Female", color="pink")
 ```
 
-We make our yticks in steps of 50,000. First we format the numbers for the labels. Then we use the actual numbers as the steps.
+We make our yticks in steps of 500,000. First we format the numbers for the labels. Then we use the actual numbers as the steps.
 
 ```python
 yticks_labels = ["{:,}".format(i) for i in range(0, 4500000+1, 500000)]
