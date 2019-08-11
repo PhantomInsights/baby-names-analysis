@@ -295,7 +295,7 @@ female_df = df[df["gender"] == "F"].groupby("year").sum()
 
 # Combined Min (count and year)
 both_df.min()["count"]
-both_df.idxmin()["count"])
+both_df.idxmin()["count"]
 
 # Male Min (count and year)
 male_df.min()["count"]
@@ -307,7 +307,7 @@ female_df.idxmin()["count"]
 
 # Combined Max (count and year)
 both_df.max()["count"]
-both_df.idxmax()["count"])
+both_df.idxmax()["count"]
 
 # Male Max (count and year)
 male_df.max()["count"]
