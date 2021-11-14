@@ -2,7 +2,7 @@
 
 In this repository I will document the complete process of gathering data, transforming it and presenting it with tables and plots.
 
-The dataset used in this project is the [Baby Names from Social Security Card Applications - National Data](https://catalog.data.gov/dataset/baby-names-from-social-security-card-applications-national-level-data) which includes records from the year 1880 to 2018.
+The dataset used in this project is the [Baby Names from Social Security Card Applications - National Data](https://catalog.data.gov/dataset/baby-names-from-social-security-card-applications-national-level-data) which includes records from the year 1880 to 2020.
 
 ## Requirements
 
@@ -31,7 +31,7 @@ with requests.get(url) as response:
 
 With only those few lines of code we downloaded the zip file and saved it to our computer, the next step is to extract the files and compute their contents.
 
-The zip file contains txt files that represent each year from 1880 to 2018 and one readme pdf file.
+The zip file contains txt files that represent each year from 1880 to 2020 and one readme pdf file.
 
 What we are going to do now is to only read into memory the txt files, process their contents and save them into a new csv file.
 
@@ -361,7 +361,7 @@ With our style declared we are ready to plot our data.
 
 ### Counts by Year
 
-Our first plot will consist on how the number of records has moved from 1880 to 2018.
+Our first plot will consist on how the number of records has moved from 1880 to 2020.
 
 First, we create new dataframes for male, female and combined.
 
@@ -483,7 +483,7 @@ percentage_df = pivoted_df / pivoted_df.sum() * 100
 
 We add a new column to store the cumulative percentages sum.
 
-```python   
+```python
 percentage_df["total"] = percentage_df.sum(axis=1)
 ```
 
